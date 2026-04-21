@@ -70,7 +70,3 @@ The libSFM public API is millimeter-uniform. Baselines, extrinsic translations,
 depth values, and point-cloud xyz are all in **mm**. When bridging to
 RealSense or other meter-based sources, multiply translations by 1000 at the
 boundary. See the `sfm` README for details.
-
-## Support
-
-Technical contact: `team_manipulation@plaif.com` (PLAIF Manipulation Team).
