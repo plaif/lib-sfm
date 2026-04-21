@@ -1,100 +1,152 @@
-# lib-sfm — Customer Examples for libSFM
+# libSFM Installation & Verification Guide
 
-Sample integrations for consumers of the `libsfm` Debian package.
-Each language binding lives in its own top-level directory so they can be
-copied, built, and distributed independently.
+> A step-by-step guide for installing the **man_libSFM** `.deb` package on a Linux system  
+> and verifying dependencies, installed file layout, and runtime linking.
 
-```
-lib-sfm/
-├── README.md            # you are here
-├── cpp/                 # C++ example (OpenCV)
-│   ├── CMakeLists.txt
-│   ├── README.md
-│   └── src/stereo_example.cpp
-├── python/              # (planned) Python example
-├── input/               # supply your own frames here
-│   ├── left.png         #   left  IR  (required)
-│   ├── right.png        #   right IR  (required)
-│   └── rgb.png          #   color frame (optional — enables colored PLY)
-└── output/              # example outputs land here (gitignored)
-```
+---
 
-The C++ example under [`cpp/`](cpp/README.md) reads the IR pair (and optional
-color frame) from `input/` and writes a depth map plus a colored PLY file to
-`output/`. A Python counterpart will be added under `python/` using the same
-input/output layout.
+## Table of Contents
 
-## Prerequisites
+1. [Installing the Package](#1-installing-the-package)
+2. [Verifying Dependencies](#2-verifying-dependencies)
+3. [Listing Installed Files](#3-listing-installed-files)
+4. [Checking Paths on Disk](#4-checking-paths-on-disk)
+5. [Verifying Runtime Links](#5-verifying-runtime-links)
+6. [Installation Checklist](#6-installation-checklist)
 
-libSFM ships as a Debian package on Ubuntu 22.04. Install the package
-yourself, then make sure the supporting libraries below are present before
-building any example.
+---
 
-| Category              | Packages                                                    |
-|-----------------------|-------------------------------------------------------------|
-| libSFM                | `libsfm`, `libsfm-dev`                                      |
-| NVIDIA runtime        | CUDA Toolkit 12.9+, cuDNN 9.10.x, TensorRT 10.12.x          |
-| C++ build tooling     | `build-essential`, `cmake ≥ 3.20`                           |
-| C++ example deps      | `libopencv-dev`                                             |
+## 1. Installing the Package
 
-## Manual runtime setup for tar installs
+### ✅ Recommended — install via `apt`
 
-If you installed CUDA / cuDNN / TensorRT from `.tar` archives instead of
-system packages, your shell may not know where to find the binaries and shared
-libraries. In that case, set the runtime paths manually before building or
-running the examples.
-
-The equivalent of the following Docker-style `ENV` settings:
-
-```Dockerfile
-ENV PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/tensorrt/lib:${LD_LIBRARY_PATH}"
-ENV LD_LIBRARY_PATH="/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${LD_LIBRARY_PATH}"
-```
-
-is to run these commands in your terminal:
+Unlike `dpkg -i`, `apt` automatically resolves and installs all packages listed in `Depends`.
 
 ```bash
-export PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
-export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/tensorrt/lib:${LD_LIBRARY_PATH}"
-export LD_LIBRARY_PATH="/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${LD_LIBRARY_PATH}"
+sudo apt install ./man_libSFM_<version>_amd64.deb
 ```
 
-If `libsfm.so`, TensorRT, or cuDNN fail to load at runtime, check
-`LD_LIBRARY_PATH` first. The extra
-`/usr/local/tensorrt/targets/x86_64-linux-gnu/lib` entry was required during
-troubleshooting when TensorRT had been unpacked from a tarball.
+### Alternative — install via `dpkg`, then fix dependencies
 
-## Supported GPUs
+If you already installed with `dpkg -i`, run the following to resolve any missing dependencies afterwards.
 
-The distributed `libsfm.so` is compiled for compute capability **7.5 / 8.6 / 8.9**
-(Turing, Ampere, Ada Lovelace). Other architectures require a rebuild — contact
-PLAIF if needed.
+```bash
+sudo dpkg -i ./man_libSFM_<version>_amd64.deb
+sudo apt -f install
+```
 
-## Supported resolutions
+> ⚠️ Skipping the `-f install` step may leave the library in a broken state.
 
-The following input resolutions are supported:
+---
 
-| Resolution  | Aspect ratio | Pixels   |
-|-------------|--------------|----------|
-| 640 × 360   | 16:9         | 0.23 MP  |
-| 640 × 480   | 4:3          | 0.31 MP  |
-| 1280 × 720  | 16:9         | 0.92 MP  |
-| 1920 × 1080 | 16:9         | 2.07 MP  |
+## 2. Verifying Dependencies
 
-## Verified environments
+### Before installation — inspect the package file directly
 
-Stable operation has been confirmed on the OS / kernel / driver combinations
-below. Other combinations may also work but are not officially verified.
+```bash
+dpkg-deb -I ./man_libSFM_<version>_amd64.deb
+```
 
-| OS              | Kernel              | NVIDIA driver | GPU             |
-|-----------------|---------------------|---------------|-----------------|
-| Ubuntu 22.04.5  | 6.8.0-107-generic   | 575.64.03     | RTX 5060        |
-| Ubuntu 22.04.5  | 5.15.0-174-generic  | 580.95.05     | RTX 4070 Super  |
+Look for the `Depends:` line in the output.
 
-## Unit convention
+### After installation — check the system-registered metadata
 
-The libSFM public API is millimeter-uniform. Baselines, extrinsic translations,
-depth values, and point-cloud xyz are all in **mm**. When bridging to
-RealSense or other meter-based sources, multiply translations by 1000 at the
-boundary. See the `sfm` README for details.
+```bash
+dpkg -s man_libSFM
+```
+
+### Expected dependencies for the current branch
+
+The following packages should appear in the `Depends:` field.
+
+| Package | Purpose |
+|---------|---------|
+| `libc6` | C standard runtime library |
+| `libstdc++6` | C++ standard library |
+| `libgcc-s1` | GCC runtime support |
+| `zlib1g` | Data compression library |
+| `libcurl4` | HTTP/HTTPS transfer library |
+| `libssl3` | OpenSSL TLS/SSL encryption |
+
+---
+
+## 3. Listing Installed Files
+
+Use `dpkg -L` to list every file path deployed by the package.
+
+```bash
+dpkg -L man_libSFM
+```
+
+### Key paths to verify
+
+| Path | Contents |
+|------|----------|
+| `/usr/lib/` | Shared library (`.so`) |
+| `/usr/include/libsfm/` | Header files (`.h`) |
+| `/usr/lib/cmake/` | CMake config files |
+| `/usr/share/doc/man_libSFM/examples/` | Example source code |
+
+---
+
+## 4. Checking Paths on Disk
+
+Confirm that the example sources were actually installed.
+
+```bash
+ls -al /usr/share/doc/man_libSFM/examples
+```
+
+To list only files (no subdirectories):
+
+```bash
+find /usr/share/doc/man_libSFM/examples -maxdepth 1 -type f
+```
+
+---
+
+## 5. Verifying Runtime Links
+
+Even after a successful install, a shared library dependency may be missing at runtime.  
+Use `ldd` to check before running anything.
+
+```bash
+# Generic path
+ldd /usr/lib/libsfm.so
+
+# Architecture-specific path (amd64)
+ldd /usr/lib/x86_64-linux-gnu/libsfm.so
+```
+
+### Expected output (healthy state)
+
+```
+    linux-vdso.so.1 => (0x00007ffd...)
+    libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3
+    libcurl.so.4 => /usr/lib/x86_64-linux-gnu/libcurl.so.4
+    libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6
+```
+
+### If `not found` appears
+
+Any entry marked `not found` is a library missing at runtime and must be installed separately.
+
+```bash
+# Search for the missing library
+apt-cache search <library-name>
+
+# Install the corresponding package
+sudo apt install <package-name>
+```
+
+---
+
+## 6. Installation Checklist
+
+All items must pass for libSFM to be correctly installed.
+
+- [ ] Installed successfully with `sudo apt install ./man_libSFM_<version>_amd64.deb`
+- [ ] `dpkg -s man_libSFM` shows all 6 expected packages in the `Depends` field
+- [ ] `dpkg -L man_libSFM` lists library, header, cmake, and examples paths
+- [ ] `ls /usr/share/doc/man_libSFM/examples` shows example files present
+- [ ] `ldd /usr/lib/.../libsfm.so` reports no `not found` entries
