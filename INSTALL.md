@@ -67,6 +67,7 @@ The following packages should appear in the `Depends:` field.
 | `zlib1g` | Data compression library |
 | `libcurl4` | HTTP/HTTPS transfer library |
 | `libssl3` | OpenSSL TLS/SSL encryption |
+| `libfmt8` | A fast and safe C++ formatting library (version 8) that serves as a modern, user-friendly alternative to printf |
 
 ---
 
