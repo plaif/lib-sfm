@@ -45,8 +45,7 @@ For other resolutions or a different rig, edit the calibration constants in
 ## Run
 
 ```bash
-./build/stereo_example      # GPU 0
-./build/stereo_example 1    # GPU 1
+./build/stereo_example
 ```
 
 Outputs (overwritten each run) are written to `../output/`:

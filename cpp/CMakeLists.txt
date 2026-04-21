@@ -11,7 +11,6 @@
 #
 # Run (from anywhere — paths are resolved relative to the project root):
 #   ./build/stereo_example       # reads ../input/, writes ../output/
-#   ./build/stereo_example 1     # use GPU 1
 # ==============================================================================
 cmake_minimum_required(VERSION 3.20)
 project(lib-sfm-cpp-examples LANGUAGES CXX)

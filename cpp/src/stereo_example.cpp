@@ -27,12 +27,9 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <string>
-#include <string_view>
 
 namespace fs = std::filesystem;
 
@@ -176,20 +173,7 @@ void PrintSummary(const cv::Size &input_size, bool use_color,
 
 } // namespace
 
-int main(int argc, char *argv[]) {
-  int gpu_id = 0;
-  for (int i = 1; i < argc; ++i) {
-    const std::string_view arg = argv[i];
-    if (arg == "-h" || arg == "--help") {
-      std::cout
-          << "Usage: " << argv[0] << " [gpu-id]\n"
-          << "Reads left.png/right.png (and optional rgb.png) from "
-          << "<project>/input/ and writes results to <project>/output/.\n";
-      return 0;
-    }
-    gpu_id = std::atoi(argv[i]);
-  }
-
+int main() {
   // EXAMPLE_PROJECT_ROOT is injected by CMake so the binary can be launched
   // from any working directory.
   const fs::path project_root = fs::path(EXAMPLE_PROJECT_ROOT);
@@ -220,9 +204,8 @@ int main(int argc, char *argv[]) {
   const sfm::ColorCamera color_cam = D415Calibration::MakeColorCamera();
 
   auto &proc = sfm::SFMProcess::Instance();
-  if (!proc.Initialize(gpu_id)) {
-    std::cerr << "[error] sfm::SFMProcess::Initialize failed (gpu=" << gpu_id
-              << ")\n";
+  if (!proc.Initialize()) {
+    std::cerr << "[error] sfm::SFMProcess::Initialize failed\n";
     return 1;
   }
 
