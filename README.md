@@ -37,6 +37,34 @@ building any example.
 | C++ build tooling     | `build-essential`, `cmake ≥ 3.20`                           |
 | C++ example deps      | `libopencv-dev`                                             |
 
+## Manual runtime setup for tar installs
+
+If you installed CUDA / cuDNN / TensorRT from `.tar` archives instead of
+system packages, your shell may not know where to find the binaries and shared
+libraries. In that case, set the runtime paths manually before building or
+running the examples.
+
+The equivalent of the following Docker-style `ENV` settings:
+
+```Dockerfile
+ENV PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/tensorrt/lib:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${LD_LIBRARY_PATH}"
+```
+
+is to run these commands in your terminal:
+
+```bash
+export PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/tensorrt/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${LD_LIBRARY_PATH}"
+```
+
+If `libsfm.so`, TensorRT, or cuDNN fail to load at runtime, check
+`LD_LIBRARY_PATH` first. The extra
+`/usr/local/tensorrt/targets/x86_64-linux-gnu/lib` entry was required during
+troubleshooting when TensorRT had been unpacked from a tarball.
+
 ## Supported GPUs
 
 The distributed `libsfm.so` is compiled for compute capability **7.5 / 8.6 / 8.9**
