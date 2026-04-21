@@ -40,8 +40,22 @@
 # debug information files
 *.dwo
 
+# IDE settings
+.idea
+.clion.source.upload.marker
+
 # ai agent
 .omc/
+.claude/
+.codex
 
-# docker 
+# docker
 docker/
+
+# CMake build trees
+build/
+cmake-build-*/
+
+# generated example artifacts
+output/
+
