@@ -37,6 +37,7 @@ building any example.
 | C++ build tooling     | `build-essential`, `cmake ≥ 3.20`                           |
 | C++ example deps      | `libopencv-dev`                                             |
 
+> 📦 For detailed installation and verification steps, see [INSTALL.md](INSTALL.md).
 ## Manual runtime setup for tar installs
 
 If you installed CUDA / cuDNN / TensorRT from `.tar` archives instead of
