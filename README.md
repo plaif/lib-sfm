@@ -45,7 +45,7 @@ building any example.
 | C++ example deps      | `libopencv-dev`                                             |
 
 > 📦 For detailed installation and verification steps, see [INSTALL.md](INSTALL.md).
-## Manual runtime setup for tar installs
+## Manual runtime setup for NVIDIA libraries tar installs
 
 If you installed CUDA / cuDNN / TensorRT from `.tar` archives instead of
 system packages, your shell may not know where to find the binaries and shared
