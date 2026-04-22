@@ -11,7 +11,9 @@ lib-sfm/
 │   ├── CMakeLists.txt
 │   ├── README.md
 │   └── src/stereo_example.cpp
-├── python/              # (planned) Python example
+├── python/              # Python example (pysfm + OpenCV)
+│   ├── README.md
+│   └── stereo_example.py
 ├── input/               # supply your own frames here
 │   ├── left.png         #   left  IR  (required)
 │   ├── right.png        #   right IR  (required)
@@ -19,10 +21,15 @@ lib-sfm/
 └── output/              # example outputs land here (gitignored)
 ```
 
-The C++ example under [`cpp/`](cpp/README.md) reads the IR pair (and optional
-color frame) from `input/` and writes a depth map plus a colored PLY file to
-`output/`. A Python counterpart will be added under `python/` using the same
-input/output layout.
+The C++ example under [`cpp/`](cpp/README.md) and the Python example under
+[`python/`](python/README.md) share the same `input/` and `output/` layout —
+both read the IR pair (and optional color frame) and produce a depth map plus
+a colored PLY file.
+
+For Python consumers we ship a self-contained wheel (`pysfm`) that bundles
+`libsfm.so` beside the extension module — **no Debian package install is
+required to use the Python binding**. See [Python package (pysfm)](#python-package-pysfm)
+below.
 
 ## Prerequisites
 
@@ -98,3 +105,82 @@ The libSFM public API is millimeter-uniform. Baselines, extrinsic translations,
 depth values, and point-cloud xyz are all in **mm**. When bridging to
 RealSense or other meter-based sources, multiply translations by 1000 at the
 boundary. See the `sfm` README for details.
+
+## Python package (pysfm)
+
+`pysfm` wraps the libSFM public API (`SFMProcess`, `Intrinsic`, `Extrinsic`,
+`ColorCamera`) with pybind11. The wheel bundles `libsfm.so` beside the
+extension module and loads it via `$ORIGIN` RPATH, so installing the Debian
+`libsfm` package is **not** required when you only use the Python binding.
+
+### Wheel artifact
+
+| File | Target |
+|---|---|
+| `pysfm-1.0.0-cp310-cp310-linux_x86_64.whl` | Ubuntu 22.04 · x86_64 · CPython 3.10 |
+
+### Install
+
+```bash
+pip install numpy
+pip install pysfm-1.0.0-cp310-cp310-linux_x86_64.whl
+```
+
+Optional extras pull in demo dependencies:
+
+```bash
+pip install "pysfm[opencv]"     # + opencv-python
+pip install "pysfm[open3d]"     # + open3d
+pip install "pysfm[realsense]"  # + pyrealsense2
+```
+
+The NVIDIA stack (CUDA 12.x, cuDNN 9.x, TensorRT 10.x) and the same
+`libcurl4 / libssl3 / libfmt8` apt line documented under **Prerequisites**
+must be present on the host.
+
+- **apt / `.deb`** installs of CUDA/cuDNN/TensorRT: nothing extra needed.
+- **tar / runfile** installs: run `ldconfig` once for the CUDA and TensorRT
+  lib directories (see the
+  [Manual runtime setup for tar installs](#manual-runtime-setup-for-tar-installs)
+  section above).
+- **pip wheel** NVIDIA stacks (`nvidia-*-cu12`, `tensorrt-cu12`): `pysfm`'s
+  preload hook `dlopen`s the libraries with `RTLD_GLOBAL` automatically.
+  TensorRT's builder still requires the `tensorrt_libs` directory on
+  `LD_LIBRARY_PATH`:
+  ```bash
+  export LD_LIBRARY_PATH="$(python -c 'import os, tensorrt_libs; print(os.path.dirname(tensorrt_libs.__file__))')":$LD_LIBRARY_PATH
+  ```
+
+Set `PYSFM_DEBUG_PRELOAD=1` to trace which NVIDIA libraries were resolved,
+or `PYSFM_EXTRA_LIB_DIRS=/a:/b` to extend the probe list.
+
+### Minimal usage
+
+```python
+import numpy as np
+import pysfm
+
+sfm = pysfm.SFMProcess.instance()
+sfm.initialize(gpu_id=0)
+
+K = pysfm.Intrinsic(fx=640., fy=640., cx=640., cy=360.)
+ir_l = np.zeros((720, 1280, 3), dtype=np.uint8)
+ir_r = np.zeros_like(ir_l)
+
+out = sfm.infer(ir_l, ir_r, K, baseline_mm=55.0,
+                want_depth=True, want_pointcloud=True)
+depth  = out["depth"]    # float32 (H, W), millimeters
+points = out["points"]   # float64 (N, 3), mm
+colors = out["colors"]   # float64 (N, 3), [0, 1]
+
+sfm.finalize()
+```
+
+`SFMProcess.infer` releases the GIL and is internally serialized, so the
+singleton is safe to share across Python threads. `initialize` / `finalize`
+are one-shot per process.
+
+A runnable end-to-end example that mirrors the C++ sample (reads
+`input/left.png`, `input/right.png`, optional `input/rgb.png`, writes depth
+images and a colored PLY under `output/`) lives in
+[`python/`](python/README.md).
