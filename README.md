@@ -64,6 +64,14 @@ below. Other combinations may also work but are not officially verified.
 | Ubuntu 22.04.5  | 6.8.0-107-generic   | 575.64.03     | RTX 5060        |
 | Ubuntu 22.04.5  | 5.15.0-174-generic  | 580.95.05     | RTX 4070 Super  |
 
+## First-run TensorRT engine build
+
+On the first run (and whenever the GPU, driver, or TensorRT version changes),
+libSFM compiles and serializes a TensorRT engine for your hardware. **Expect
+at least ~20 minutes** of startup time for this step; exact duration depends on
+your CPU, GPU, driver, and TensorRT version, and can be noticeably longer on
+slower machines. Subsequent runs reuse the cached engine and start in seconds.
+
 ## Unit convention
 
 The libSFM public API is millimeter-uniform. Baselines, extrinsic translations,
