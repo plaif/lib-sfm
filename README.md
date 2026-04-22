@@ -1,4 +1,46 @@
-# lib-sfm — Customer Examples for libSFM
+# Real-Time Stereo Foundation Model
+
+This repository contains a real-time stereo foundation model designed to improve stereo depth quality at high speed. After optimization, the model is calculated to run at **36 FPS at 720p on an RTX 4080**.
+
+At a high level, stereo depth estimation works by comparing the left and right images of the same scene and finding matching visual regions between them. The horizontal shift between those matches, often called disparity, is then used to estimate depth: larger shifts usually correspond to closer objects, while smaller shifts correspond to farther objects. This model follows that same basic stereo principle, but uses a foundation-model-based approach to produce higher-quality depth more robustly and at real-time speed.
+
+## Model Flow
+
+The diagram below shows the overall model flow.
+
+![Model flow](<assets/flow image.png>)
+
+## Inputs and Outputs
+
+The model takes a left-right stereo image pair as input and predicts dense stereo depth. For best results, the input pair should be **stereo-rectified**, spatially aligned, and captured at the same resolution. In practical use, the left and right images should come from a calibrated stereo rig so the camera intrinsics and stereo baseline are known when metric depth is required.
+
+In this repository, the example pipeline uses `left.png` and `right.png` as the required stereo inputs, with optional `rgb.png` for colorizing the output point cloud. The generated outputs include a raw depth map in millimeters, a colorized depth preview, and a colored point cloud.
+
+The animated preview below shows a visual comparison between a traditional stereo method and our AI-based stereo model.
+
+![Demo video preview](assets/demo_video.webp)
+
+
+## Performance
+
+The graph below shows the speed-accuracy tradeoff of this model family compared with NVIDIA stereo models.
+
+![Performance graph](assets/performance_graph.png)
+
+This model family is designed to improve runtime efficiency while maintaining practical stereo depth quality. In general, the faster variants reduce inference cost so they can run at higher speed, while still preserving moderate performance rather than collapsing in accuracy. This makes the model suitable for real-time applications where both latency and depth quality matter, and where a balanced tradeoff is often more useful than pursuing maximum accuracy alone.
+
+Within the family, the larger foundation model emphasizes stronger accuracy, while the fast variants shift the design toward lower computational cost and faster execution. The result is a set of models that span different operating points, allowing users to choose between higher quality or higher speed depending on deployment constraints.
+
+In the graph:
+
+- **FStereo ViTs** denotes **Foundation Stereo**.
+- **Fast-FStereo L** denotes the **best-accuracy version** of the Fast Foundation Stereo model.
+- **Fast-FStereo S** denotes the **best-speed version** of the Fast Foundation Stereo model.
+
+For fair comparison, the speed shown in this graph reflects **PyTorch inference speed before optimization**. Actual speed varies depending on hardware and stereo image size.
+
+
+## lib-sfm — Customer Examples for libSFM
 
 Sample integrations for consumers of the `libsfm` Debian package.
 Each language binding lives in its own top-level directory so they can be
