@@ -40,7 +40,7 @@ In the graph:
 For fair comparison, the speed shown in this graph reflects **PyTorch inference speed before optimization**. Actual speed varies depending on hardware and stereo image size.
 
 
-## lib-sfm — Customer Examples for libSFM
+## Customer Examples for libSFM
 
 Sample integrations for consumers of the `libsfm` Debian package.
 Each language binding lives in its own top-level directory so they can be
