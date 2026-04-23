@@ -52,9 +52,9 @@ COLOR_INTRINSIC = pysfm.Intrinsic(
 # 9-element buffer libSFM sees is in column-major order.
 _COLOR_ROTATION_ROW_MAJOR = np.array(
     [
-        [ 0.999969,  0.001909,  0.007650],
-        [-0.001945,  0.999987,  0.004676],
-        [-0.007641, -0.004691,  0.999960],
+        [ 0.999969, -0.001945, -0.007641],
+        [ 0.001909,  0.999987, -0.004691],
+        [ 0.007650,  0.004676,  0.999960],
     ],
     dtype=np.float64,
 )
