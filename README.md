@@ -144,10 +144,10 @@ The following input resolutions are supported:
 Stable operation has been confirmed on the OS / kernel / driver combinations
 below. Other combinations may also work but are not officially verified.
 
-| OS              | Kernel              | NVIDIA driver | GPU             |
-|-----------------|---------------------|---------------|-----------------|
-| Ubuntu 22.04.5  | 6.8.0-107-generic   | 575.64.03     | RTX 5060        |
-| Ubuntu 22.04.5  | 5.15.0-174-generic  | 580.95.05     | RTX 4070 Super  |
+| Arch    | OS              | Kernel              | NVIDIA driver | GPU             |
+|---------|-----------------|---------------------|---------------|-----------------|
+| x86_64  | Ubuntu 22.04.5  | 6.8.0-107-generic   | 575.64.03     | RTX 5060        |
+| x86_64  | Ubuntu 22.04.5  | 5.15.0-174-generic  | 580.95.05     | RTX 4070 Super  |
 
 ## First-run TensorRT engine build
 
