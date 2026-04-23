@@ -1,5 +1,12 @@
 # Real-Time Stereo Foundation Model
 
+[![Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/plaif/lib-sfm/releases)
+[![OS](https://img.shields.io/badge/OS-Ubuntu%2022.04-E95420?logo=ubuntu&logoColor=white)](https://releases.ubuntu.com/22.04/)
+[![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/17)
+[![CUDA](https://img.shields.io/badge/CUDA-12.9-76B900?logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit)
+[![cuDNN](https://img.shields.io/badge/cuDNN-9.10.x-76B900?logo=nvidia&logoColor=white)](https://developer.nvidia.com/cudnn)
+[![TensorRT](https://img.shields.io/badge/TensorRT-10.12.x-76B900?logo=nvidia&logoColor=white)](https://developer.nvidia.com/tensorrt)
+
 This repository contains a real-time stereo foundation model designed to improve stereo depth quality at high speed. After optimization, the model is calculated to run at **36 FPS at 720p on an RTX 4080**.
 
 At a high level, stereo depth estimation works by comparing the left and right images of the same scene and finding matching visual regions between them. The horizontal shift between those matches, often called disparity, is then used to estimate depth: larger shifts usually correspond to closer objects, while smaller shifts correspond to farther objects. This model follows that same basic stereo principle, but uses a foundation-model-based approach to produce higher-quality depth more robustly and at real-time speed.
@@ -82,7 +89,7 @@ building any example.
 | Category              | Packages                                                    |
 |-----------------------|-------------------------------------------------------------|
 | libSFM                | `libsfm`, `libsfm-dev`                                      |
-| NVIDIA runtime        | CUDA Toolkit 12.9+, cuDNN 9.10.x, TensorRT 10.12.x          |
+| NVIDIA runtime        | CUDA Toolkit 12.9, cuDNN 9.10.x, TensorRT 10.12.x           |
 | C++ build tooling     | `build-essential`, `cmake ≥ 3.20`                           |
 | C++ example deps      | `libopencv-dev`                                             |
 
@@ -185,7 +192,7 @@ pip install "pysfm[open3d]"     # + open3d
 pip install "pysfm[realsense]"  # + pyrealsense2
 ```
 
-The NVIDIA stack (CUDA 12.x, cuDNN 9.x, TensorRT 10.x) and the same
+The NVIDIA stack (CUDA 12.9, cuDNN 9.10.x, TensorRT 10.12.x) and the same
 `libcurl4 / libssl3 / libfmt8` apt line documented under **Prerequisites**
 must be present on the host.
 
