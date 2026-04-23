@@ -87,14 +87,14 @@ building any example.
 | C++ example deps      | `libopencv-dev`                                             |
 
 > 📦 For detailed installation and verification steps, see [INSTALL.md](INSTALL.md).
-## Manual runtime setup for NVIDIA libraries tar installs
+## Manual runtime setup for NVIDIA libraries installed from Tarballs
 
-If you installed CUDA / cuDNN / TensorRT from `.tar` archives instead of
+If you installed CUDA, cuDNN, or TensorRT from `.tar` archives instead of
 system packages, your shell may not know where to find the binaries and shared
 libraries. In that case, set the runtime paths manually before building or
 running the examples.
 
-The equivalent of the following Docker-style `ENV` settings:
+The equivalent Docker-style `ENV` settings are:
 
 ```Dockerfile
 ENV PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
