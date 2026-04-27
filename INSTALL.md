@@ -164,4 +164,10 @@ LIBSFM_API_KEY=your-activation-key-here
 LIBSFM_WEIGHT_FILE=your-weight-filename-here
 ```
 
-After saving the file, the library will automatically validate your license and load the specified weights on initialization.
+---
+## 8. Export TensorRT Path
+```
+export PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/tensorrt/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${LD_LIBRARY_PATH}"
+```
