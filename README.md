@@ -46,6 +46,20 @@ In the graph:
 
 For fair comparison, the speed shown in this graph reflects **PyTorch inference speed before optimization**. Actual speed varies depending on hardware and stereo image size.
 
+## Prerequisites
+
+libSFM ships as a Debian package on Ubuntu 22.04. Install the package
+yourself, then make sure the supporting libraries below are present before
+building any example.
+
+| Category              | Packages                                                    |
+|-----------------------|-------------------------------------------------------------|
+| libSFM                | `libsfm`, `libsfm-dev`                                      |
+| NVIDIA runtime        | CUDA Toolkit 12.9, cuDNN 9.10.x, TensorRT 10.12.x           |
+| C++ build tooling     | `build-essential`, `cmake ≥ 3.20`                           |
+| C++ example deps      | `libopencv-dev`                                             |
+
+> 📦 For detailed installation and verification steps, see [INSTALL.md](INSTALL.md).
 
 ## Customer Examples for libSFM
 
@@ -80,20 +94,8 @@ For Python consumers we ship a self-contained wheel (`pysfm`) that bundles
 required to use the Python binding**. See [Python package (pysfm)](#python-package-pysfm)
 below.
 
-## Prerequisites
 
-libSFM ships as a Debian package on Ubuntu 22.04. Install the package
-yourself, then make sure the supporting libraries below are present before
-building any example.
 
-| Category              | Packages                                                    |
-|-----------------------|-------------------------------------------------------------|
-| libSFM                | `libsfm`, `libsfm-dev`                                      |
-| NVIDIA runtime        | CUDA Toolkit 12.9, cuDNN 9.10.x, TensorRT 10.12.x           |
-| C++ build tooling     | `build-essential`, `cmake ≥ 3.20`                           |
-| C++ example deps      | `libopencv-dev`                                             |
-
-> 📦 For detailed installation and verification steps, see [INSTALL.md](INSTALL.md).
 ## Manual runtime setup for NVIDIA libraries installed from Tarballs
 
 If you installed CUDA, cuDNN, or TensorRT from `.tar` archives instead of
