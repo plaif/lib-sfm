@@ -243,7 +243,8 @@ A runnable end-to-end example that mirrors the C++ sample (reads
 images and a colored PLY under `output/`) lives in
 [`python/`](python/README.md).
 
-### contact
+# contact
+
 ## Licensing & Purchase
 
 libSFM is distributed as a commercial library. To obtain a license, follow the steps below.
@@ -267,8 +268,8 @@ Once your purchase is approved, an activation key will be sent to the email addr
 Update your `.env` file with the provided activation key and the latest model weight filename:
 
 ```env
-SFM_LICENSE_KEY=your-activation-key-here
-SFM_WEIGHT_FILE=your-weight-filename-here
+LIBSFM_API_KEY=your-activation-key-here
+LIBSFM_WEIGHT_FILE=your-weight-filename-here
 ```
 
 After saving the file, the library will automatically validate your license and load the specified weights on initialization.
