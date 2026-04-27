@@ -151,3 +151,17 @@ All items must pass for libSFM to be correctly installed.
 - [ ] `dpkg -L man_libSFM` lists library, header, cmake, and examples paths
 - [ ] `ls /usr/share/doc/man_libSFM/examples` shows example files present
 - [ ] `ldd /usr/lib/.../libsfm.so` reports no `not found` entries
+
+##
+
+---
+## 7. Configure Your Environment
+
+Update your `.env` file with the provided activation key and the latest model weight filename:
+
+```env
+LIBSFM_API_KEY=your-activation-key-here
+LIBSFM_WEIGHT_FILE=your-weight-filename-here
+```
+
+After saving the file, the library will automatically validate your license and load the specified weights on initialization.
