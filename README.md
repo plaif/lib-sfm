@@ -244,34 +244,3 @@ A runnable end-to-end example that mirrors the C++ sample (reads
 `input/left.png`, `input/right.png`, optional `input/rgb.png`, writes depth
 images and a colored PLY under `output/`) lives in
 [`python/`](python/README.md).
-
-# contact
-
-## Licensing & Purchase
-
-libSFM is distributed as a commercial library. To obtain a license, follow the steps below.
-
-### 1. Contact Us
-
-Send a purchase inquiry to **[khkim@plaif.com](mailto:khkim@plaif.com)** with the following information:
-
-- Your name and organization
-- Intended use case and deployment environment
-- Expected number of devices or instances
-
-> **Note:** Our team will review your inquiry and follow up regarding licensing options, pricing, and any additional requirements.
-
-### 2. Receive Your License Key
-
-Once your purchase is approved, an activation key will be sent to the email address provided during the inquiry.
-
-### 3. Configure Your Environment
-
-Update your `.env` file with the provided activation key and the latest model weight filename:
-
-```env
-LIBSFM_API_KEY=your-activation-key-here
-LIBSFM_WEIGHT_FILE=your-weight-filename-here
-```
-
-After saving the file, the library will automatically validate your license and load the specified weights on initialization.
