@@ -177,13 +177,16 @@ extension module and loads it via `$ORIGIN` RPATH, so installing the Debian
 
 | File | Target |
 |---|---|
-| `pysfm-1.0.0-cp310-cp310-linux_x86_64.whl` | Ubuntu 22.04 · x86_64 · CPython 3.10 |
+| `pysfm-<version>-cp310-cp310-linux_x86_64.whl` | Ubuntu 22.04 · x86_64 · CPython 3.10 |
+
+The wheel filename tracks the libSFM source-tree `version.txt`, so it bumps in
+lock-step with the C++ library on every release.
 
 ### Install
 
 ```bash
 pip install numpy
-pip install pysfm-1.0.0-cp310-cp310-linux_x86_64.whl
+pip install pysfm-<version>-cp310-cp310-linux_x86_64.whl
 ```
 
 Optional extras pull in demo dependencies:
@@ -230,7 +233,7 @@ ir_r = np.zeros_like(ir_l)
 out = sfm.infer(ir_l, ir_r, K, baseline_mm=55.0,
                 want_depth=True, want_pointcloud=True)
 depth  = out["depth"]    # float32 (H, W), millimeters
-points = out["points"]   # float64 (N, 3), mm
+points = out["points"]   # float64 (N, 3), mm  (N = H * W)
 colors = out["colors"]   # float64 (N, 3), [0, 1]
 
 sfm.finalize()
@@ -239,6 +242,31 @@ sfm.finalize()
 `SFMProcess.infer` releases the GIL and is internally serialized, so the
 singleton is safe to share across Python threads. `initialize` / `finalize`
 are one-shot per process.
+
+### Zero-copy steady state (optional)
+
+For long-running pipelines, pre-allocate the output buffers once and pass
+them via `depth_out=` / `points_out=` / `colors_out=`. `pysfm` installs
+those pointers as the destination of the CUDA D2H copy — no intermediate
+`std::vector`, no per-call numpy allocation — and returns the **same**
+ndarray objects in the result dict (so `out["depth"] is depth` holds true):
+
+```python
+H, W = 720, 1280
+depth  = np.empty((H, W),    dtype=np.float32)
+points = np.empty((H * W, 3), dtype=np.float64)
+colors = np.empty((H * W, 3), dtype=np.float64)
+
+while frame := next_frame():
+    sfm.infer(frame.left, frame.right, K, baseline_mm=55.0,
+              depth_out=depth, points_out=points, colors_out=colors)
+    # depth / points / colors now hold the latest result — no allocation.
+```
+
+Reusing the same buffers across calls preserves libSFM's no-allocation
+steady-state policy on the Python side as well. Buffers must be
+C-contiguous, writeable, and shaped to `(H, W)` (depth) / `(H*W, 3)`
+(points, colors); mismatches raise `ValueError`.
 
 A runnable end-to-end example that mirrors the C++ sample (reads
 `input/left.png`, `input/right.png`, optional `input/rgb.png`, writes depth

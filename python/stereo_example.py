@@ -202,16 +202,28 @@ def main() -> int:
         print("[error] pysfm.SFMProcess.initialize failed", file=sys.stderr)
         return 1
 
+    # Pre-allocate the output buffers and pass them via `depth_out=` /
+    # `points_out=` / `colors_out=`. pysfm wires their memory directly into
+    # the CUDA D2H copy — no intermediate std::vector, no per-call numpy
+    # allocation, and the very same arrays are returned in the result dict
+    # (`out["depth"] is depth_mm` holds true). Reuse these buffers across
+    # repeated calls to preserve libSFM's no-allocation steady-state policy.
+    H, W = ir_left.shape[:2]
+    depth_mm = np.empty((H, W), dtype=np.float32)
+    points = np.empty((H * W, 3), dtype=np.float64)
+    colors = np.empty((H * W, 3), dtype=np.float64)
+
     try:
         infer_kwargs: dict = dict(
-            want_depth=True,
-            want_pointcloud=True,
+            depth_out=depth_mm,
+            points_out=points,
+            colors_out=colors,
         )
         if use_color:
             infer_kwargs["bgr"] = color
             infer_kwargs["color"] = make_color_camera()
 
-        out = sfm.infer(
+        sfm.infer(
             ir_left,
             ir_right,
             DEPTH_INTRINSIC,
@@ -220,10 +232,6 @@ def main() -> int:
         )
     finally:
         sfm.finalize()
-
-    depth_mm = out["depth"]
-    points = out["points"]
-    colors = out["colors"]
 
     save_depth(depth_mm, output_dir)
     save_ply(points, colors, output_dir / "pointcloud.ply")

@@ -7,8 +7,11 @@ and writes a depth map plus a colored point cloud to `../output/`.
 
 Install the Debian packages listed in the repository-root [`README.md`](../README.md)
 (`libsfm-dev`, `libopencv-dev`, CUDA / TensorRT / cuDNN runtimes). This example
-assumes `find_package(sfm)` can locate `sfm-config.cmake`, which `libsfm-dev`
-installs under `/usr/lib/x86_64-linux-gnu/cmake/sfm/`.
+assumes `find_package(sfm)` can locate `sfm-config.cmake`, which the libSFM
+Debian package installs under `/usr/lib/cmake/sfm/` (CMake's `find_package`
+search path covers this location automatically; the multiarch
+`/usr/lib/x86_64-linux-gnu/cmake/sfm/` is also searched if a future build is
+multiarch-aware).
 
 ## Build
 

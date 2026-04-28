@@ -14,10 +14,14 @@ cloud to `../output/`.
 
   ```bash
   pip install numpy
-  pip install "pysfm[opencv] @ file:///absolute/path/to/pysfm-1.0.0-cp310-cp310-linux_x86_64.whl"
+  pip install "pysfm[opencv] @ file:///absolute/path/to/pysfm-<version>-cp310-cp310-linux_x86_64.whl"
   # or, if the wheel is on your local disk:
-  pip install pysfm-1.0.0-cp310-cp310-linux_x86_64.whl opencv-python
+  pip install pysfm-<version>-cp310-cp310-linux_x86_64.whl opencv-python
   ```
+
+  The wheel version tracks libSFM's `version.txt`, so the filename bumps in
+  lock-step with the C++ library — substitute the version printed by the
+  shipped wheel for `<version>`.
 
   See the root-README section [Python package (pysfm)](../README.md#python-package-pysfm)
   for the full install matrix (apt / tar / pip-wheel NVIDIA stacks).
