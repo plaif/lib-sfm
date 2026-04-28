@@ -173,3 +173,25 @@ export PATH="/usr/local/bin:/usr/local/cuda/bin:${PATH}"
 export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/tensorrt/lib:${LD_LIBRARY_PATH}"
 export LD_LIBRARY_PATH="/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${LD_LIBRARY_PATH}"
 ```
+
+---
+
+## 9. example
+
+```
+lib-sfm/
+├── README.md            # you are here
+├── cpp/                 # C++ example (OpenCV)
+│   ├── CMakeLists.txt
+│   ├── README.md
+│   └── src/stereo_example.cpp
+├── python/              # Python example (pysfm + OpenCV)
+│   ├── README.md
+│   └── stereo_example.py
+├── input/               # supply your own frames here
+│   ├── left.png         #   left  IR  (required)
+│   ├── right.png        #   right IR  (required)
+│   └── rgb.png          #   color frame (optional — enables colored PLY)
+└── output/              # example outputs land here (gitignored)
+```
+cpp, python 2가지의 예시가 있으니 각 예시들의 README를 참고하여 라이브러리가 정상적으로 동작하는지 체크해주세요
