@@ -14,8 +14,8 @@ cloud to `../output/`.
 
   ```bash
   pip install numpy
-  pip install "pysfm[opencv] @ file:///absolute/path/to/pysfm-<version>-cp310-cp310-linux_x86_64.whl"
-  # or, if the wheel is on your local disk:
+  # ... and pysfm-<version>-cp310-cp310-linux_x86_64.whl download from Release page,
+  # install it as follows
   pip install pysfm-<version>-cp310-cp310-linux_x86_64.whl opencv-python
   ```
 
