@@ -7,8 +7,7 @@ cloud to `../output/`.
 ## Prerequisites
 
 - System packages and NVIDIA runtime listed in the
-  [repository-root README](../README.md) (CUDA 12.x / cuDNN 9.x /
-  TensorRT 10.x, plus `libcurl4 / libssl3 / libfmt8`).
+  [repository-root README](../README.md) (CUDA Toolkit 12.9, cuDNN 9.10.x, TensorRT 10.12.x, plus `libcurl4 / libssl3 / libfmt8`).
 - Python 3.10 (the wheel is tagged `cp310`).
 - `pysfm` wheel installed with the `opencv` extra:
 
