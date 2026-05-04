@@ -192,83 +192,17 @@ pip install pysfm-<version>-cp310-cp310-linux_x86_64.whl
 Optional extras pull in demo dependencies:
 
 ```bash
-pip install "pysfm[opencv]"     # + opencv-python
-pip install "pysfm[open3d]"     # + open3d
-pip install "pysfm[realsense]"  # + pyrealsense2
+pip install opencv-python
 ```
 
 The NVIDIA stack (CUDA 12.9, cuDNN 9.10.x, TensorRT 10.12.x) and the same
 `libcurl4 / libssl3 / libfmt8` apt line documented under **Prerequisites**
 must be present on the host.
 
-- **apt / `.deb`** installs of CUDA/cuDNN/TensorRT: nothing extra needed.
 - **tar / runfile** installs: run `ldconfig` once for the CUDA and TensorRT
   lib directories (see the
   [Manual runtime setup for tar installs](#manual-runtime-setup-for-tar-installs)
   section above).
-- **pip wheel** NVIDIA stacks (`nvidia-*-cu12`, `tensorrt-cu12`): `pysfm`'s
-  preload hook `dlopen`s the libraries with `RTLD_GLOBAL` automatically.
-  TensorRT's builder still requires the `tensorrt_libs` directory on
-  `LD_LIBRARY_PATH`:
-  ```bash
-  export LD_LIBRARY_PATH="$(python -c 'import os, tensorrt_libs; print(os.path.dirname(tensorrt_libs.__file__))')":$LD_LIBRARY_PATH
-  ```
 
 Set `PYSFM_DEBUG_PRELOAD=1` to trace which NVIDIA libraries were resolved,
 or `PYSFM_EXTRA_LIB_DIRS=/a:/b` to extend the probe list.
-
-### Minimal usage
-
-```python
-import numpy as np
-import pysfm
-
-sfm = pysfm.SFMProcess.instance()
-sfm.initialize(gpu_id=0)
-
-K = pysfm.Intrinsic(fx=640., fy=640., cx=640., cy=360.)
-ir_l = np.zeros((720, 1280, 3), dtype=np.uint8)
-ir_r = np.zeros_like(ir_l)
-
-out = sfm.infer(ir_l, ir_r, K, baseline_mm=55.0,
-                want_depth=True, want_pointcloud=True)
-depth  = out["depth"]    # float32 (H, W), millimeters
-points = out["points"]   # float64 (N, 3), mm  (N = H * W)
-colors = out["colors"]   # float64 (N, 3), [0, 1]
-
-sfm.finalize()
-```
-
-`SFMProcess.infer` releases the GIL and is internally serialized, so the
-singleton is safe to share across Python threads. `initialize` / `finalize`
-are one-shot per process.
-
-### Zero-copy steady state (optional)
-
-For long-running pipelines, pre-allocate the output buffers once and pass
-them via `depth_out=` / `points_out=` / `colors_out=`. `pysfm` installs
-those pointers as the destination of the CUDA D2H copy — no intermediate
-`std::vector`, no per-call numpy allocation — and returns the **same**
-ndarray objects in the result dict (so `out["depth"] is depth` holds true):
-
-```python
-H, W = 720, 1280
-depth  = np.empty((H, W),    dtype=np.float32)
-points = np.empty((H * W, 3), dtype=np.float64)
-colors = np.empty((H * W, 3), dtype=np.float64)
-
-while frame := next_frame():
-    sfm.infer(frame.left, frame.right, K, baseline_mm=55.0,
-              depth_out=depth, points_out=points, colors_out=colors)
-    # depth / points / colors now hold the latest result — no allocation.
-```
-
-Reusing the same buffers across calls preserves libSFM's no-allocation
-steady-state policy on the Python side as well. Buffers must be
-C-contiguous, writeable, and shaped to `(H, W)` (depth) / `(H*W, 3)`
-(points, colors); mismatches raise `ValueError`.
-
-A runnable end-to-end example that mirrors the C++ sample (reads
-`input/left.png`, `input/right.png`, optional `input/rgb.png`, writes depth
-images and a colored PLY under `output/`) lives in
-[`python/`](python/README.md).
