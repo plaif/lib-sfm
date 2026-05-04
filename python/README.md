@@ -12,7 +12,7 @@ cloud to `../output/`.
 - `pysfm` wheel installed with the `opencv` extra:
 
   ```bash
-  pip install numpy
+  pip install numpy opencv-python
   # ... and pysfm-<version>-cp310-cp310-linux_x86_64.whl download from Release page,
   # install it as follows
   pip install pysfm-<version>-cp310-cp310-linux_x86_64.whl opencv-python
@@ -52,8 +52,7 @@ For other resolutions or a different rig, edit the constants at the top of
 ## Run
 
 ```bash
-cd python
-python3 stereo_example.py
+python stereo_example.py
 ```
 
 Outputs (overwritten each run) are written to `../output/`:

@@ -195,14 +195,9 @@ Optional extras pull in demo dependencies:
 pip install opencv-python
 ```
 
-The NVIDIA stack (CUDA 12.9, cuDNN 9.10.x, TensorRT 10.12.x) and the same
-`libcurl4 / libssl3 / libfmt8` apt line documented under **Prerequisites**
-must be present on the host.
-
-- **tar / runfile** installs: run `ldconfig` once for the CUDA and TensorRT
-  lib directories (see the
-  [Manual runtime setup for tar installs](#manual-runtime-setup-for-tar-installs)
-  section above).
-
-Set `PYSFM_DEBUG_PRELOAD=1` to trace which NVIDIA libraries were resolved,
-or `PYSFM_EXTRA_LIB_DIRS=/a:/b` to extend the probe list.
+The NVIDIA stack (CUDA 12.9, cuDNN 9.10.x, TensorRT 10.12.x) must be present
+on the host. For Python users, these libraries are expected to be installed
+from `.tar` archives. After unpacking, export the runtime paths described in
+[Manual runtime setup for NVIDIA libraries installed from Tarballs](#manual-runtime-setup-for-nvidia-libraries-installed-from-tarballs)
+so the wheel can resolve `libcudart`, `libcudnn`, and `libnvinfer` at import
+time.
